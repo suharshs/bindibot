@@ -10,6 +10,7 @@
 import argparse
 from cookielib import CookieJar
 import json
+import os
 import urllib2
 
 
@@ -42,9 +43,11 @@ class PiazzaAPI:
     content_response = json.loads(self.url_opener.open(content_url, content_data).read())
     content = {}
     if not content_response['result']:
-      content['error'] = 'Content_id out of range'
-    elif content_response['result']['type'] != 'question':
+      content['error'] = 'Content_id out of range.'
+    elif not 'type' in content_response['result'] or content_response['result']['type'] != 'question':
       content['error'] = 'Not a question.';
+    elif not 'status' in content_response['result'] or content_response['result']['status'] == 'deleted':
+      content['error'] = 'Content was deleted.'
     else:
       content['question'] = content_response['result']['history'][0]['content']
       content['subject'] = content_response['result']['history'][0]['subject']
@@ -55,18 +58,36 @@ class PiazzaAPI:
           content['instructor_answer'] = child['history'][0]['content']
     return content
 
-  def write_course_question_data(self, course_id, output_file):
-    pass
-
+  def write_course_question_data(self, course_id, output_file, start_id=1, end_id=4000):
+    """Writes all question data from the specified course_id into output_file.
+       One JSON object per line of the file."""
+    content_id = start_id
+    with open(output_file, 'a+') as f:
+      while content_id < end_id:
+        content = self.get_question_data(content_id, course_id)
+        print content_id
+        content_id += 1
+        if not 'error' in content:
+          f.write(json.dumps(content) + '\n')
+      # Remove the extra newline char at the end of the file.
+      f.seek(-1, os.SEEK_END)
+      f.truncate()
 
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description='Get Piazza question data.')
   parser.add_argument('--username', help='The username to login with.', required=True)
   parser.add_argument('--password', help='The password for the username.', required=True)
-  parser.add_argument('--content_id', help='The id of the desired content.', required=True)
-  parser.add_argument('--course_id', help='The id of the desired course.', required=True)
+  parser.add_argument('--content_id', help='The id of the desired content. If not provided all course_ids data will be written to data_file.', default=None)
+  parser.add_argument('--course_ids', help='The id of the desired course.', required=True, nargs='+')
+  parser.add_argument('--start_id', help='The id to start writing the course data from.', type=int, default=1)
+  parser.add_argument('--end_id', help='The id to stop writing the course data at.', type=int, default=4000)
+  parser.add_argument('--data_file', help='The file to output all course data when content_id is not provided.', default=None)
   args = parser.parse_args()
 
   piazza_api = PiazzaAPI(args.username, args.password)
-  print json.dumps(piazza_api.get_question_data(args.content_id, args.course_id))
+  if args.content_id:
+    print json.dumps(piazza_api.get_question_data(args.content_id, args.course_ids[0]))
+  elif args.data_file:
+    for course_id in args.course_ids:
+      piazza_api.write_course_question_data(course_id, args.data_file, start_id=args.start_id, end_id=args.end_id)
