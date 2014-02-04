@@ -5,6 +5,9 @@
   --password: The password for the username.
   --content_id: The id of the desired content.
   --course_id: The id of the desired course.
+  --start_id: The id to start writing the course data from.
+  --end_id: The id to stop writing the course data at.
+  --data_file: The file to output all course data when content_id is not provided.
 """
 
 import argparse
