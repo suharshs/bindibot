@@ -19,7 +19,7 @@ def clean_data(input_filename, output_filename):
         content_json['instructor_answer'] = clean_string(content_json.get('instructor_answer', ''))
         content_json['question'] = clean_string(content_json.get('question', ''))
         content_json['subject'] = clean_string(content_json.get('question', ''))
-        if content_json['question']:
+        if content_json['question'] and (content_json['student_answer'] or content_json['instructor_answer']):
           output_file.write(json.dumps(content_json) + '\n')
 
 def clean_string(input_string):
