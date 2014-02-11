@@ -13,7 +13,6 @@
 import argparse
 from cookielib import CookieJar
 import json
-import os
 import urllib2
 
 
@@ -72,10 +71,6 @@ class PiazzaAPI:
         content_id += 1
         if not 'error' in content:
           f.write(json.dumps(content) + '\n')
-      # Remove the extra newline char at the end of the file.
-      f.seek(-1, os.SEEK_END)
-      f.truncate()
-
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description='Get Piazza question data.')
