@@ -11,6 +11,7 @@
   --elasticsearch_host: If provided will store raw data into elasticsearch.
   --elasticsearch_index: If provided will write data into this index.
   --elasticsearch_type: If provided will write data into this type.
+  --raw: Print raw json data. Default is False.
 """
 
 import argparse
@@ -109,11 +110,15 @@ if __name__ == "__main__":
   parser.add_argument('--elasticsearch_hosts', help='If provided will store raw data into elasticsearch.', default=None, nargs='+')
   parser.add_argument('--elasticsearch_index', help='If provided will store raw data into this elasticsearch index.', default=None)
   parser.add_argument('--elasticsearch_type', help='If provided will store raw data into this elasticsearch type.', default=None)
+  parser.add_argument('--raw', help='Print raw json data.', type=bool, default=False)
   args = parser.parse_args()
 
   piazza_api = PiazzaAPI(args.username, args.password)
   if args.content_id:
-    print json.dumps(piazza_api.get_question_data(args.content_id, args.course_ids[0]))
+    if args.raw:
+      print json.dumps(piazza_api.get_raw_content(args.content_id, args.course_ids[0]))
+    else:
+      print json.dumps(piazza_api.get_question_data(args.content_id, args.course_ids[0]))
   elif args.elasticsearch_hosts and args.elasticsearch_type and args.elasticsearch_index:
     for course_id in args.course_ids:
       piazza_api.write_course_data_elasticsearch(
