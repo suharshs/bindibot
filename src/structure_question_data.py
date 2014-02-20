@@ -66,7 +66,6 @@ if __name__ == "__main__":
   source_iterator = ElasticSearchIterator([args.es_source_host], args.es_source_index, args.es_source_type)
   dest_es = elasticsearch.Elasticsearch(args.es_dest_hosts)
   current_doc = source_iterator.next()
-  # print get_structured_doc(current_doc)
   while current_doc is not None:
     structured_doc = get_structured_doc(current_doc)
     dest_es.index(args.es_dest_index, args.es_dest_type, body=structured_doc)
