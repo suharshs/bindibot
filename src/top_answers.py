@@ -26,8 +26,20 @@ def get_similar_question_objects(es_hosts, es_index, es_type, in_question, num_a
   return search_results['hits']['hits']
 
 def get_answers(es_hosts, es_index, es_type, in_question, num_answers):
-  """Returns the top num_answers for the input question."""
-  pass
+  """Returns the top num_answers for the input question. Returns a dictionary with s_answers and i_answers."""
+  question_docs = get_similar_question_objects(es_hosts, es_index, es_type, in_question, num_answers)
+  s_answers = [doc['_source']['s_answer'] for doc in question_docs if doc['_source']['s_answer']]
+  i_answers = [doc['_source']['i_answer'] for doc in question_docs if doc['_source']['i_answer']]
+  return {'s_answers': s_answers, 'i_answers': i_answers}
+
+def print_answers(answers):
+  """Prints the top answers to the console given an answers dictionary from get_answers."""
+  print 'Student Answers:'
+  for s_answer in answers['s_answers']:
+    print s_answer + '-------------------------------------------------------------'
+  print 'Instructor Answers:'
+  for i_answer in answers['i_answers']:
+    print i_answer + '-------------------------------------------------------------'
 
 
 if __name__ == "__main__":
@@ -39,6 +51,5 @@ if __name__ == "__main__":
   parser.add_argument('--num_answers', help='Number of answers that will be returned', type=int, default=1)
   args = parser.parse_args()
 
-  print get_similar_question_objects(args.es_hosts, args.es_index, args.es_type, args.question, args.num_answers)
-
-  # answers = get_answers(args.in_question)
+  answers = get_answers(args.es_hosts, args.es_index, args.es_type, args.question, args.num_answers)
+  print_answers(answers)
