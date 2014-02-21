@@ -43,6 +43,7 @@ class PiazzaAPI:
       raise AuthenticationError("Authentication failed.\n%s" % login_response['result'])
 
   def get_raw_content(self, content_id, course_id):
+    """Gets the raw json content for the content_id and course_id."""
     content_url = 'https://piazza.com/logic/api?method=get.content'
     content_data = '{"method":"content.get","params":{"cid":"%s","nid":"%s"}}' % (content_id, course_id)
     return json.loads(self.url_opener.open(content_url, content_data).read())
