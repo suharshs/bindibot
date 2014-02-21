@@ -36,10 +36,11 @@ def print_answers(answers):
   """Prints the top answers to the console given an answers dictionary from get_answers."""
   print 'Student Answers:'
   for s_answer in answers['s_answers']:
-    print s_answer + '-------------------------------------------------------------'
+    print s_answer + '\n'
+  print '--------------------------------------------------------------\n'
   print 'Instructor Answers:'
   for i_answer in answers['i_answers']:
-    print i_answer + '-------------------------------------------------------------'
+    print i_answer + '\n'
 
 
 if __name__ == "__main__":
