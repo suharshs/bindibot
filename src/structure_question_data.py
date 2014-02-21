@@ -68,5 +68,6 @@ if __name__ == "__main__":
   current_doc = source_iterator.next()
   while current_doc is not None:
     structured_doc = get_structured_doc(current_doc)
-    dest_es.index(args.es_dest_index, args.es_dest_type, body=structured_doc)
+    if structured_doc['i_answer'] or structured_doc['s_answer']:
+      dest_es.index(args.es_dest_index, args.es_dest_type, body=structured_doc)
     current_doc = source_iterator.next()
