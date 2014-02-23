@@ -14,4 +14,12 @@ First install requirements.txt (preferably in a [virtualenv](https://pypi.python
 
     bin/elasticsearch
 
+Now there are a few executables you can use:
 
+piazza_api.py
+
+popuylate_cs225_data.py
+
+structure_question_data.py
+
+top_answers.py
