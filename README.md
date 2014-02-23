@@ -16,7 +16,7 @@ First install requirements.txt (preferably in a [virtualenv](https://pypi.python
 
 Now, there are a few executables you can use:
 
-piazza_api.py: Allows getting data from a piazza course and writing to file, elasticsearch, or printing to console.
+`piazza_api.py`: Allows getting data from a piazza course and writing to file, elasticsearch, or printing to console.
 
 `--username`: The username to login with.
 
@@ -40,7 +40,7 @@ piazza_api.py: Allows getting data from a piazza course and writing to file, ela
 
 `--raw`: Print raw json data. Default is False.
 
-populate_cs225_data.py: Uses the piazza_api to pull previous semester data for cs225 and store in elasticsearch.
+`populate_cs225_data.py`: Uses the piazza_api to pull previous semester data for cs225 and store in elasticsearch.
 
 `--username`: The username to login with.
 
@@ -52,7 +52,7 @@ populate_cs225_data.py: Uses the piazza_api to pull previous semester data for c
 
 `--elasticsearch_type`: Write data into this type.
 
-structure_question_data.py: Converts raw piazza data from the piazza_api to more structured data with question and answer information.
+`structure_question_data.py`: Converts raw piazza data from the piazza_api to more structured data with question and answer information.
 
 `--es_source_host`: Read raw data from elasticsearch.
 
@@ -66,7 +66,7 @@ structure_question_data.py: Converts raw piazza data from the piazza_api to more
 
 `--es_dest_type`: Write structured data into this type.
 
-top_answers.py: Given a query question returns the top relevant student and instructor answers.
+`top_answers.py`: Given a query question returns the top relevant student and instructor answers.
 
 `--question`: The input question that we want to answer.
 
