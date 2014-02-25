@@ -19,6 +19,7 @@ from cookielib import CookieJar
 import elasticsearch
 import json
 import urllib2
+from util import get_aid
 
 
 class AuthenticationError(Exception):
@@ -97,6 +98,14 @@ class PiazzaAPI:
       else:
         es.index(index=es_index, doc_type=es_type, body=content_response)
       content_id += 1
+
+  def post_course_content(self, course_id, cid, answer_text, answer_type):
+    """Posts content to piazza. Should be used to post an answer to piazza."""
+    post_url = 'https://piazza.com/logic/api?method=content.answer&aid=%s' % get_aid()
+    post_data = '{"method":"content.answer","params":{"content":"%s","type":"%s","cid":"%s","revision":0,"anonymous":"no"}}' %(answer_text, answer_type, cid)
+    print self.url_opener.open(post_url, post_data).read()
+
+  
 
 
 if __name__ == "__main__":
