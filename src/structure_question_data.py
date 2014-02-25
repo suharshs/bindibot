@@ -44,7 +44,6 @@ def get_structured_doc(raw_doc):
   structured_doc['i_answer'] = ''
   structured_doc['i_answer_upvotes'] = 0
   structured_doc['cid'] = raw_doc['result']['id']
-  structured_doc['aid'] = raw_doc['aid']
   for child in raw_doc['result']['children']:
     if child['type'] == 's_answer' and len(child['history']) > 0:
       structured_doc['s_answer'] = child['history'][0]['content']
