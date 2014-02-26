@@ -7,23 +7,18 @@ from random import randint
 
 
 def to_base36(value):
-  """Converts an int to base 36 string."""
+  """Converts an int to base 36 string. Only works for positive numbers."""
   value = int(value)
 
   if value == 0:
       return '0'
-  if value < 0:
-      sign = '-'
-      value = -value
-  else:
-      sign = ''
 
   result = []
   while value:
       value, mod = divmod(value, 36)
       result.append('0123456789abcdefghijklmnopqrstuvwxyz'[mod])
 
-  return sign + ''.join(reversed(result))
+  return ''.join(reversed(result))
 
 def js_getTime():
   """Gets the number of milliseconds since 1970/01/01.
