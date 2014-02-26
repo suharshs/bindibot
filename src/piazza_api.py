@@ -110,7 +110,7 @@ class PiazzaAPI:
         es.index(index=es_index, doc_type=es_type, body=content_response)
       content_id += 1
 
-  def post_course_content(self, course_id, answer_text, answer_type, cid=None,
+  def post_answer(self, course_id, answer_text, answer_type, cid=None,
                           content_id=None):
     """Posts content to piazza. Should be used to post an answer to piazza.
        Must provide either cid or content_id.
@@ -122,9 +122,21 @@ class PiazzaAPI:
     post_data = ('{"method":"content.answer","params":{"content":"%s",' + 
                  '"type":"%s","cid":"%s","revision":0,"anonymous":"no"}}'
                  % (answer_text, answer_type, cid))
-    print self.url_opener.open(post_url, post_data).read()
+    self.url_opener.open(post_url, post_data).read()
 
-  
+  def post_followup(self, course_id, followup_text, cid=None, content_id=None):
+    """Posts content to a piazza followup.
+       Must provide either cid or content_id.
+    """
+    if not cid:
+      cid = self.get_raw_content(content_id, course_id)['result']['id']
+    post_url = ('https://piazza.com/logic/api?method=content.create&aid=%s'
+                % get_aid())
+    post_data = ('{"method":"content.create",' +
+                 '"params":{"content":"","type":"followup","revision":0,' + 
+                 '"anonymous":"no","nid":"%s","subject":"%s","cid":"%s",}}'
+                 % (course_id,followup_text,cid))
+    print self.url_opener.open(post_url, post_data).read()
 
 
 if __name__ == "__main__":
