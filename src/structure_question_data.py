@@ -14,12 +14,14 @@ import elasticsearch
 
 
 class ElasticSearchIterator:
-  """Wrapper around elasticsearch scroll to continue getting the next document."""
+  """Wrapper around elasticsearch scroll to get the next document."""
 
-  def __init__(self, es_hosts, es_index, es_type, body='{"query": {"match_all": {}}}'):
+  def __init__(self, es_hosts, es_index, es_type,
+               body='{"query": {"match_all": {}}}'):
     """Starts the iterator on the elasticsearch db."""
     self.es = elasticsearch.Elasticsearch(es_hosts)
-    self.scroll_id = self.es.search(es_index, es_type, body, search_type='scan', scroll='10m', size=100)['_scroll_id']
+    self.scroll_id = self.es.search(es_index, es_type, body, search_type='scan',
+                                    scroll='10m', size=100)['_scroll_id']
     self.cache = []
 
   def next(self):
@@ -56,15 +58,25 @@ def get_structured_doc(raw_doc):
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description='Structure raw json data.')
-  parser.add_argument('--es_source_host', help='Read raw data from elasticsearch.', required=True)
-  parser.add_argument('--es_source_index', help='Read raw data from this index.', required=True)
-  parser.add_argument('--es_source_type', help='Read raw data from this type.', required=True)
-  parser.add_argument('--es_dest_hosts', help='Store structured data into elasticsearch.', required=True, nargs='+')
-  parser.add_argument('--es_dest_index', help='Write structured data into this index.', required=True)
-  parser.add_argument('--es_dest_type', help='Write structured data into this type.', required=True)
+  parser.add_argument('--es_source_host',
+                      help='Read raw data from elasticsearch.', required=True)
+  parser.add_argument('--es_source_index',
+                      help='Read raw data from this index.', required=True)
+  parser.add_argument('--es_source_type',
+                      help='Read raw data from this type.', required=True)
+  parser.add_argument('--es_dest_hosts',
+                      help='Store structured data into elasticsearch.',
+                      required=True, nargs='+')
+  parser.add_argument('--es_dest_index',
+                      help='Write structured data into this index.',
+                      required=True)
+  parser.add_argument('--es_dest_type',
+                      help='Write structured data into this type.',
+                      required=True)
   args = parser.parse_args()
 
-  source_iterator = ElasticSearchIterator([args.es_source_host], args.es_source_index, args.es_source_type)
+  source_iterator = ElasticSearchIterator(
+      [args.es_source_host], args.es_source_index, args.es_source_type)
   dest_es = elasticsearch.Elasticsearch(args.es_dest_hosts)
   current_doc = source_iterator.next()
   while current_doc is not None:

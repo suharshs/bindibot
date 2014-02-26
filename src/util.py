@@ -26,9 +26,11 @@ def to_base36(value):
   return sign + ''.join(reversed(result))
 
 def js_getTime():
-  """Gets the number of milliseconds since 1970/01/01. Does exactly what js getTime does."""
-  delta = datetime.now() - datetime(1970,1,1)
-  ms = (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+  """Gets the number of milliseconds since 1970/01/01.
+     Does exactly what js getTime does.
+  """
+  dt = datetime.now() - datetime(1970,1,1)
+  ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
   return ms
 
 def get_aid():
