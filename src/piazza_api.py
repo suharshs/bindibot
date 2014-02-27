@@ -125,7 +125,8 @@ class PiazzaAPI:
                  % (answer_text, answer_type, cid))
     self.url_opener.open(post_url, post_data).read()
 
-  def post_followup(self, course_id, followup_text, cid=None, content_id=None):
+  def post_followup(self, course_id, followup_text, cid=None, content_id=None,
+                    resolved=True):
     """Posts content to a piazza followup.
        Must provide either cid or content_id.
     """
@@ -135,9 +136,19 @@ class PiazzaAPI:
                 % get_aid())
     post_data = ('{"method":"content.create",' +
                  '"params":{"content":"","type":"followup","revision":0,' + 
-                 '"anonymous":"no","nid":"%s","subject":"%s","cid":"%s",}}'
+                 '"anonymous":"no","nid":"%s","subject":"%s","cid":"%s"}}'
                  % (course_id,followup_text,cid))
-    print self.url_opener.open(post_url, post_data).read()
+    post_data = post_data.encode('ascii', 'ignore')
+    followup_json = json.loads(self.url_opener.open(post_url, post_data).read())
+    followup_cid = followup_json['result']['id']
+
+    if resolved:
+      post_url = (
+        'https://piazza.com/logic/api?method=content.mark_resolved&aid=%s'
+        % get_aid())
+      post_data = ('{"method":"content.mark_resolved",' +
+                   '"params":{cid":"%s","resolved":true}}' % followup_cid)
+      self.url_opener.open(post_url, post_data).read()
 
 
 if __name__ == "__main__":
