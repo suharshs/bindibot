@@ -147,7 +147,7 @@ class PiazzaAPI:
         'https://piazza.com/logic/api?method=content.mark_resolved&aid=%s'
         % get_aid())
       post_data = ('{"method":"content.mark_resolved",' +
-                   '"params":{cid":"%s","resolved":true}}' % followup_cid)
+                   '"params":{"cid":"%s","resolved":true}}' % followup_cid)
       self.url_opener.open(post_url, post_data).read()
 
 

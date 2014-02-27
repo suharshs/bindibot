@@ -16,6 +16,18 @@ First install requirements.txt (preferably in a [virtualenv](https://pypi.python
 
 Now, there are a few executables you can use:
 
+`piazza_scanner.py`: Reads new bindibot scores from the last bindibot score found and answers those questions. Should be called in a cron job for deployment.
+
+* `--username`: The username to login with.
+* `--password`: The password for the username.
+* `--course_id`: The id of the desired course.
+* `--es_metadata_host`: Read last_id from elasticsearch.
+* `--es_metadata_index`: Read last_id from this index.
+* `--es_metadata_type`: Read last_id from this type.
+* `--es_question_host`: Read question data from elasticsearch.
+* `--es_question_index`: Read question data from this index.
+* `--es_question_type`: Read question data from this type.
+
 `piazza_api.py`: Allows getting data from a piazza course and writing to file, elasticsearch, or printing to console.
 
 * `--username`: The username to login with.
