@@ -140,6 +140,8 @@ class PiazzaAPI:
                  % (course_id,followup_text,cid))
     post_data = post_data.encode('ascii', 'ignore')
     followup_json = json.loads(self.url_opener.open(post_url, post_data).read())
+    if not followup_json['result']:
+      return
     followup_cid = followup_json['result']['id']
 
     if resolved:
