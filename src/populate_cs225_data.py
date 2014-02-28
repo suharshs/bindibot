@@ -1,10 +1,10 @@
 """
-  Gets all cs225 previous semester data and populate elasticsearch index.
-  --username: The username to login with.
-  --password: The password for the username.
-  --elasticsearch_host: Store raw data into elasticsearch.
-  --elasticsearch_index: Write data into this index.
-  --elasticsearch_type: Write data into this type.
+Gets all cs225 previous semester data and populate elasticsearch index.
+--username: The username to login with.
+--password: The password for the username.
+--elasticsearch_host: Store raw data into elasticsearch.
+--elasticsearch_index: Write data into this index.
+--elasticsearch_type: Write data into this type.
 """
 
 import argparse

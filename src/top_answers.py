@@ -14,7 +14,9 @@ import json
 
 def get_similar_question_objects(es_hosts, es_index, es_type, question,
                                  subject, num_answers):
-  """Returns the similar question objects to the in_question."""
+  """
+  Returns the similar question objects to the in_question.
+  """
   es = elasticsearch.Elasticsearch(es_hosts)
   query_dict = {
     'query': {
@@ -35,8 +37,9 @@ def get_similar_question_objects(es_hosts, es_index, es_type, question,
   return search_results['hits']['hits']
 
 def get_answers(es_hosts, es_index, es_type, question, subject, num_answers):
-  """Returns the top num_answers for the input question.
-     Returns a dictionary with s_answers and i_answers.
+  """
+  Returns the top num_answers for the input question.
+  Returns a dictionary with s_answers and i_answers.
   """
   question_docs = get_similar_question_objects(es_hosts, es_index, es_type,
                                                question, subject, num_answers)
@@ -47,8 +50,9 @@ def get_answers(es_hosts, es_index, es_type, question, subject, num_answers):
   return {'s_answers': s_answers, 'i_answers': i_answers}
 
 def print_answers(answers):
-  """Prints the top answers to the console given an answers dictionary
-     from get_answers.
+  """
+  Prints the top answers to the console given an answers dictionary
+  from get_answers.
   """
   print 'Student Answers:'
   for s_answer in answers['s_answers']:

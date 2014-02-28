@@ -7,7 +7,9 @@ from random import randint
 
 
 def to_base36(value):
-  """Converts an int to base 36 string. Only works for positive numbers."""
+  """
+  Converts an int to base 36 string. Only works for positive numbers.
+  """
   value = int(value)
 
   if value == 0:
@@ -21,8 +23,9 @@ def to_base36(value):
   return ''.join(reversed(result))
 
 def js_getTime():
-  """Gets the number of milliseconds since 1970/01/01.
-     Does exactly what js getTime does.
+  """
+  Gets the number of milliseconds since 1970/01/01.
+  Does exactly what js getTime does.
   """
   dt = datetime.now() - datetime(1970,1,1)
   ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0

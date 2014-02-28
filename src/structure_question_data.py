@@ -1,12 +1,12 @@
 """
-  Converts all raw data generated from populate_cs225_data.py into
-  a more useful structure for bindibot.
-  --es_source_host: Read raw data from elasticsearch.
-  --es_source_index: Read raw data from this index.
-  --es_source_type: Read raw data from this type.
-  --es_dest_hosts: Store structured data into elasticsearch.
-  --es_dest_index: Write structured data into this index.
-  --es_dest_type: Write structured data into this type.
+Converts all raw data generated from populate_cs225_data.py into
+a more useful structure for bindibot.
+--es_source_host: Read raw data from elasticsearch.
+--es_source_index: Read raw data from this index.
+--es_source_type: Read raw data from this type.
+--es_dest_hosts: Store structured data into elasticsearch.
+--es_dest_index: Write structured data into this index.
+--es_dest_type: Write structured data into this type.
 """
 
 import argparse
@@ -14,7 +14,9 @@ import elasticsearch
 
 
 class ElasticSearchIterator:
-  """Wrapper around elasticsearch scroll to get the next document."""
+  """
+  Wrapper around elasticsearch scroll to get the next document.
+  """
 
   def __init__(self, es_hosts, es_index, es_type,
                body='{"query": {"match_all": {}}}'):
@@ -36,7 +38,9 @@ class ElasticSearchIterator:
       return None
 
 def get_structured_doc(raw_doc):
-  """Given a raw json object will return a structure json object."""
+  """
+  Given a raw json object will return a structure json object.
+  """
   structured_doc = {}
   structured_doc['question'] = raw_doc['result']['history'][0]['content']
   structured_doc['question_upvotes'] = len(raw_doc['result']['tag_good_arr'])

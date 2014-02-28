@@ -1,17 +1,17 @@
 """
-  API to pull course question answer data from Piazza.
-  Command line tool will retrieve content with the following flags specified.
-  --username: The username to login with.
-  --password: The password for the username.
-  --content_id: The id of the desired content.
-  --course_id: The id of the desired course.
-  --start_id: The id to start writing the course data from.
-  --end_id: The id to stop writing the course data at.
-  --data_file: The file to output all data when content_id is not provided.
-  --elasticsearch_host: If provided will store raw data into elasticsearch.
-  --elasticsearch_index: If provided will write data into this index.
-  --elasticsearch_type: If provided will write data into this type.
-  --raw: Print raw json data. Default is False.
+API to pull course question answer data from Piazza.
+Command line tool will retrieve content with the following flags specified.
+--username: The username to login with.
+--password: The password for the username.
+--content_id: The id of the desired content.
+--course_id: The id of the desired course.
+--start_id: The id to start writing the course data from.
+--end_id: The id to stop writing the course data at.
+--data_file: The file to output all data when content_id is not provided.
+--elasticsearch_host: If provided will store raw data into elasticsearch.
+--elasticsearch_index: If provided will write data into this index.
+--elasticsearch_type: If provided will write data into this type.
+--raw: Print raw json data. Default is False.
 """
 
 import argparse
@@ -23,21 +23,29 @@ from util import get_aid
 
 
 class AuthenticationError(Exception):
-    """Error in authenicating at login."""
+    """
+    Error in authenicating at login.
+    """
 
 
 class PiazzaAPI:
-  """Provides access to the Piazza REST API."""
+  """
+  Provides access to the Piazza REST API.
+  """
 
   def __init__(self, user, password):
-    """Authenticates and instantiates the PiazzaAPI object."""
+    """
+    Authenticates and instantiates the PiazzaAPI object.
+    """
     self.cookie_jar = CookieJar()
     self.url_opener = urllib2.build_opener(
         urllib2.HTTPCookieProcessor(self.cookie_jar))
     self.authenticate(user, password)
 
   def authenticate(self, user, password):
-    """Logs in the user and stores the session cookie."""
+    """
+    Logs in the user and stores the session cookie.
+    """
     login_url = 'https://piazza.com/logic/api?method=user.login'
     login_data = ('{"method":"user.login","params":{"email":"%s","pass":"%s"}}'
                   % (user, password))
@@ -45,18 +53,22 @@ class PiazzaAPI:
       self.url_opener.open(login_url, login_data).read())
     if login_response['result'] != 'OK':
       raise AuthenticationError(
-        "Authentication failed.\n%s" % login_response['result'])
+        'Authentication failed.\n%s' % login_response['result'])
 
   def get_raw_content(self, content_id, course_id):
-    """Gets the raw json content for the content_id and course_id."""
+    """
+    Gets the raw json content for the content_id and course_id.
+    """
     content_url = 'https://piazza.com/logic/api?method=get.content'
     content_data = ('{"method":"content.get","params":{"cid":"%s","nid":"%s"}}'
                     % (content_id, course_id))
     return json.loads(self.url_opener.open(content_url, content_data).read())
 
   def get_question_data(self, content_id, course_id):
-    """Returns the data for the specified course_id and content_id.
-       Returns None if the content type isn't a question."""
+    """
+    Returns the data for the specified course_id and content_id.
+    Returns None if the content type isn't a question.
+    """
     content_response = self.get_raw_content(content_id, course_id)
     content = {}
     if not content_response['result']:
@@ -80,8 +92,10 @@ class PiazzaAPI:
 
   def write_course_question_data(self, course_id, output_file, start_id=1,
                                  end_id=4000):
-    """Writes all question data from the specified course_id into output_file.
-       One JSON object per line of the file."""
+    """
+    Writes all question data from the specified course_id into output_file.
+    One JSON object per line of the file.
+    """
     content_id = start_id
     with open(output_file, 'a+') as f:
       while content_id < end_id:
@@ -93,7 +107,9 @@ class PiazzaAPI:
 
   def write_course_data_elasticsearch(self, es_hosts, es_index, es_type,
                                       course_id, start_id=1, end_id=4000):
-    """Writes all raw data into the specified elasticsearch index and type."""
+    """
+    Writes all raw data into the specified elasticsearch index and type.
+    """
     es = elasticsearch.Elasticsearch(es_hosts)
     content_id = start_id
     while content_id < end_id:
@@ -113,8 +129,9 @@ class PiazzaAPI:
 
   def post_answer(self, course_id, answer_text, answer_type, cid=None,
                           content_id=None):
-    """Posts content to piazza. Should be used to post an answer to piazza.
-       Must provide either cid or content_id.
+    """
+    Posts content to piazza. Should be used to post an answer to piazza.
+    Must provide either cid or content_id.
     """
     if not cid:
       cid = self.get_raw_content(content_id, course_id)['result']['id']
@@ -127,8 +144,8 @@ class PiazzaAPI:
 
   def post_followup(self, course_id, followup_text, cid=None, content_id=None,
                     resolved=True):
-    """Posts content to a piazza followup.
-       Must provide either cid or content_id.
+    """
+    Posts content to a piazza followup. Must provide either cid or content_id.
     """
     if not cid:
       cid = self.get_raw_content(content_id, course_id)['result']['id']
