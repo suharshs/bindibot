@@ -16,6 +16,7 @@ import argparse
 from elasticsearch import Elasticsearch
 from piazza_api import PiazzaAPI
 from top_answers import get_answers
+from query_functions import default_match_query
 
 
 class PiazzaScanner:
@@ -47,8 +48,8 @@ class PiazzaScanner:
     """
     for question in questions:
       answers = get_answers(self.es_question_host, self.es_question_index,
-                            self.es_question_type, question['question'],
-                            question['subject'], 10)
+                            self.es_question_type, question, 10,
+                            default_match_query)
       response = self.generate_response_string(answers)
       if response:
         self.piazza.post_followup(self.course_id, response, cid=question['cid'])

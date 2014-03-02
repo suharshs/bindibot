@@ -10,39 +10,29 @@ Given a question, prints the top answers that most likely answer the question.
 
 import argparse
 import elasticsearch
-import json
+from query_functions import default_match_query
 
-def get_similar_question_objects(es_hosts, es_index, es_type, question,
-                                 subject, num_answers):
+def get_similar_question_objects(es_hosts, es_index, es_type, in_question_doc,
+                                 num_answers,
+                                 query_function):
   """
   Returns the similar question objects to the in_question.
   """
   es = elasticsearch.Elasticsearch(es_hosts)
-  query_dict = {
-    'query': {
-      'bool': {
-        'should': [
-          {
-            'match' : {'question' : question}
-          }
-        ]
-      }
-    }
-  }
-  if subject:
-    query_dict['query']['bool']['should'].append({'match':{'subject':subject}})
-  query_string = json.dumps(query_dict)
+  query_string = query_function(in_question_doc)
   search_results = es.search(es_index, es_type, body=query_string,
                              size=num_answers)
   return search_results['hits']['hits']
 
-def get_answers(es_hosts, es_index, es_type, question, subject, num_answers):
+def get_answers(es_hosts, es_index, es_type, question_doc, num_answers,
+                query_function):
   """
   Returns the top num_answers for the input question.
   Returns a dictionary with s_answers and i_answers.
   """
   question_docs = get_similar_question_objects(es_hosts, es_index, es_type,
-                                               question, subject, num_answers)
+                                               question_doc, num_answers,
+                                               query_function)
   s_answers = [doc['_source']['s_answer'] for doc in question_docs
                if doc['_source']['s_answer']]
   i_answers = [doc['_source']['i_answer'] for doc in question_docs
@@ -71,7 +61,7 @@ if __name__ == "__main__":
                       required=True)
   parser.add_argument('--subject',
                       help='The subject for the question we want to answer.',
-                      default=None)
+                      required=None)
   parser.add_argument('--es_hosts', help='Read from this elasticsearch host.',
                       required=True, nargs='+')
   parser.add_argument('--es_index', help='Read data from this index.',
@@ -83,6 +73,9 @@ if __name__ == "__main__":
                       default=5)
   args = parser.parse_args()
 
+  question_doc = {}
+  question_doc['question'] = args.question
+  question_doc['subject'] = args.subject
   answers = get_answers(args.es_hosts, args.es_index, args.es_type,
-                        args.question, args.subject, args.num_answers)
+                        question_doc, args.num_answers, default_match_query)
   print_answers(answers)
