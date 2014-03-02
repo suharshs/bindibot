@@ -35,7 +35,7 @@ courses = [
 ]
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Get Piazza question data.')
   parser.add_argument('--username', help='The username to login with.',
                       required=True)

@@ -111,7 +111,7 @@ class PiazzaScanner:
                             body='{"doc":{"last_read": %s}}' % last_id)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Scanner of new piazza data.')
   parser.add_argument('--username', help='The username to login with.',
                       required=True)

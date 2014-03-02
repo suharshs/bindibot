@@ -60,7 +60,7 @@ def get_structured_doc(raw_doc):
   return structured_doc
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Structure raw json data.')
   parser.add_argument('--es_source_host',
                       help='Read raw data from elasticsearch.', required=True)

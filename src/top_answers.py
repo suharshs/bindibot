@@ -53,7 +53,7 @@ def print_answers(answers):
     print i_answer + '\n'
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   parser = argparse.ArgumentParser(
       description='Given a query question, returns the top relevant answers')
   parser.add_argument('--question',
