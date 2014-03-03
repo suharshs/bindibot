@@ -28,7 +28,7 @@ def js_getTime():
   Does exactly what js getTime does.
   """
   dt = datetime.now() - datetime(1970,1,1)
-  ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
+  ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000
   return ms
 
 def get_aid():
