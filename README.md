@@ -10,7 +10,8 @@ course data.
 
 [Running](#running)
 
-Setup <a name="setup"></a>
+<a name="setup"></a>
+Setup 
 -----
 
 First install requirements.txt (preferably in a
@@ -23,7 +24,8 @@ elasticsearch directory.
 
     bin/elasticsearch
 
-Executables <a name="executables"></a>
+<a name="executables"></a>
+Executables
 -----------
 
 Now, there are a few executables you can use:
@@ -87,7 +89,8 @@ instructor answers.
 * `--es_type`: Read data from this type.
 * `--num_answers`: Number of answers that will be returned.
 
-Running <a name="running"></a>
+<a name="running"></a>
+Running
 -------
 
 When running for the first time, one must populate the elastic search db with
