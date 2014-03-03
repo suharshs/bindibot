@@ -4,7 +4,13 @@ bindibot
 A system that attempts to correctly answer piazza questions based on historical 
 course data.
 
-Setup
+[Setup](#setup)
+
+[Executables](#executables)
+
+[Running](#running)
+
+Setup <a name="setup"></a>
 -----
 
 First install requirements.txt (preferably in a
@@ -16,6 +22,9 @@ First install requirements.txt (preferably in a
 elasticsearch directory.
 
     bin/elasticsearch
+
+Executables <a name="executables"></a>
+-----------
 
 Now, there are a few executables you can use:
 
@@ -77,3 +86,16 @@ instructor answers.
 * `--es_index`: Read data from this index.
 * `--es_type`: Read data from this type.
 * `--num_answers`: Number of answers that will be returned.
+
+Running <a name="running"></a>
+-------
+
+When running for the first time, one must populate the elastic search db with
+course data.
+
+1. `python populate_cs225_data.py`.
+2. `python structure_question_data.py`.
+3. `python piazza_scanner.py`.
+
+Subsequent calls can just call `piazza_scanner.py`, no need to repopulate
+elasticsearch.
