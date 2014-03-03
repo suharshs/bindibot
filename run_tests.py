@@ -8,7 +8,7 @@ sys.path.append('./src/')
 sys.path.append('./test/')
 
 from test_util import TestUtil
-from test_util import TestQueryFunctions
+from test_query_functions import TestQueryFunctions
 
 
 def suite():
