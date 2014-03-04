@@ -43,6 +43,7 @@ Should be called in a cron job for deployment.
 * `--es_question_host`: Read question data from elasticsearch.
 * `--es_question_index`: Read question data from this index.
 * `--es_question_type`: Read question data from this type.
+* `--query_function`: The query function to search for matches with.
 
 `piazza_api.py`: Allows getting data from a piazza course and writing to file,
 elasticsearch, or printing to console.
@@ -88,6 +89,7 @@ instructor answers.
 * `--es_index`: Read data from this index.
 * `--es_type`: Read data from this type.
 * `--num_answers`: Number of answers that will be returned.
+* `--query_function`: The query function to search for matches with.
 
 <a name="running"></a>
 Running

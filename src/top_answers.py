@@ -6,11 +6,12 @@ Given a question, prints the top answers that most likely answer the question.
 --es_index: Read data from this index.
 --es_type: Read data from this type.
 --num_answers: Number of answers that will be returned.
+--query_function: The query function to search for matches with.
 """
 
 import argparse
 import elasticsearch
-from query_functions import default_match_query
+from query_functions import query_functions
 
 def get_similar_question_objects(es_hosts, es_index, es_type, in_question_doc,
                                  num_answers,
@@ -61,7 +62,10 @@ if __name__ == '__main__':
                       required=True)
   parser.add_argument('--subject',
                       help='The subject for the question we want to answer.',
-                      required=None)
+                      required=True)
+  parser.add_argument('--tags',
+                      help='The tags for the question we want to answer.',
+                      required=True)
   parser.add_argument('--es_hosts', help='Read from this elasticsearch host.',
                       required=True, nargs='+')
   parser.add_argument('--es_index', help='Read data from this index.',
@@ -71,11 +75,16 @@ if __name__ == '__main__':
   parser.add_argument('--num_answers',
                       help='Number of answers that will be returned', type=int,
                       default=5)
+  parser.add_argument('--query_function',
+                      help='The query function to search for matches with.',
+                      default='default_match_query')
   args = parser.parse_args()
 
   question_doc = {}
   question_doc['question'] = args.question
   question_doc['subject'] = args.subject
+  question_doc['tags'] = args.tags
   answers = get_answers(args.es_hosts, args.es_index, args.es_type,
-                        question_doc, args.num_answers, default_match_query)
+                        question_doc, args.num_answers,
+                        query_functions[args.query_function])
   print_answers(answers)

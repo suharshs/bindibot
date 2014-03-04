@@ -83,6 +83,7 @@ class PiazzaAPI:
       content['question'] = content_response['result']['history'][0]['content']
       content['subject'] = content_response['result']['history'][0]['subject']
       content['cid'] = content_response['result']['id']
+      content['tags'] = ' '.join(content_response['result']['tags'])
       for child in content_response['result']['children']:
         if child['type'] == 's_answer' and len(child['history']) > 0:
           content['student_answer'] = child['history'][0]['content']
