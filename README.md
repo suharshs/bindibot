@@ -10,6 +10,8 @@ course data.
 
 [Running](#running)
 
+[Tests](#tests)
+
 <a name="setup"></a>
 Setup 
 -----
@@ -104,3 +106,11 @@ course data.
 
 Subsequent calls can just call `piazza_scanner.py`, no need to repopulate
 elasticsearch.
+
+<a name="tests"></a>
+Tests
+-----
+
+You can run the tests by running:
+
+    python run_tests.py
