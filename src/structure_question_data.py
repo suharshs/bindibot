@@ -51,6 +51,7 @@ def get_structured_doc(raw_doc):
   structured_doc['i_answer_upvotes'] = 0
   structured_doc['cid'] = raw_doc['result']['id']
   structured_doc['tags'] = ' '.join(raw_doc['result']['tags'])
+  structured_doc['followups'] = []
   for child in raw_doc['result']['children']:
     if child['type'] == 's_answer' and len(child['history']) > 0:
       structured_doc['s_answer'] = child['history'][0]['content']
@@ -58,6 +59,17 @@ def get_structured_doc(raw_doc):
     if child['type'] == 'i_answer' and len(child['history']) > 0:
       structured_doc['i_answer'] = child['history'][0]['content'] 
       structured_doc['i_answer_upvotes'] = len(child['tag_endorse'])
+    if child['type'] == 'followup':
+      followup_doc = {}
+      followup_doc['uid'] = child.get('ANON')
+      followup_doc['content'] = child['subject']
+      followup_doc['comments'] = []
+      for comment in child['children']:
+        followup_doc['comments'].append({
+          'uid': comment.get('ANON'),
+          'content': comment['subject']
+        })
+      structured_doc['followups'].append(followup_doc)
   return structured_doc
 
 
