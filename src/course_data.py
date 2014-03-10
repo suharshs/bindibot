@@ -22,22 +22,41 @@ courses = {
     {
       'name': "sp12",
       'course_id': "gx9jljivqar210",
-      'max_id': 2900,
-      'tag_map': {
-        'lab1': 'lab_intro',
-        'lab2': 'lab_debug',
-        'lab3': 'lab_memory',
-        'lab4': 'lab_inheritance',
-        'lab5': 'lab_parallel',
-        'lab6': 'lab_race',
-        'lab7': 'lab_quacks',
-        'lab8': 'lab_trees',
-        'lab9': '',
-        'lab10': 'lab_hash',
-        'lab11': 'lab_reduce',
-        'lab12': 'lab_heaps',
-        'lab13': 'lab_graphs',
-      }
+      'max_id': 2900
     }
   ]
+}
+
+tag_maps = {
+  'sp12': {
+    'lab1': 'lab_intro',
+    'lab2': 'lab_debug',
+    'lab3': 'lab_memory',
+    'lab4': 'lab_inheritance',
+    'lab5': 'lab_parallel',
+    'lab6': 'lab_race',
+    'lab7': 'lab_quacks',
+    'lab8': 'lab_trees',
+    'lab9': '',
+    'lab10': 'lab_hash',
+    'lab11': 'lab_reduce',
+    'lab12': 'lab_heaps',
+    'lab13': 'lab_graphs',
+  },
+  'default': {
+    'lab1': 'lab_intro',
+    'lab2': 'lab_debug',
+    'lab3': 'lab_memory',
+    'lab4': 'lab_inheritance',
+    'lab5': 'lab_parallel',
+    'lab6': 'lab_race',
+    'lab7': 'lab_quacks',
+    'lab8': 'lab_trees',
+    'lab9': '',
+    'lab10': 'lab_hash',
+    'lab11': 'lab_reduce',
+    'lab12': 'lab_heaps',
+    'lab13': 'lab_graphs',
+    'lab14': 'lab_graphs',
+  }
 }

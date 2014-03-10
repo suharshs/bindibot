@@ -11,6 +11,7 @@ a more useful structure for bindibot.
 
 import argparse
 import elasticsearch
+import course_data
 
 
 class ElasticSearchIterator:
@@ -50,6 +51,10 @@ def get_structured_doc(raw_doc):
   structured_doc['i_answer'] = ''
   structured_doc['i_answer_upvotes'] = 0
   structured_doc['cid'] = raw_doc['result']['id']
+  tag_map = course_data.tag_maps[raw_doc.get('course_name', 'default')]
+  for i in range(len(raw_doc['result']['tags'])):
+    if raw_doc['result']['tags'][i] in tag_map:
+      raw_doc['result']['tags'][i] = tag_map[raw_doc['result']['tags'][i]]
   structured_doc['tags'] = ' '.join(raw_doc['result']['tags'])
   structured_doc['followups'] = []
   for child in raw_doc['result']['children']:
