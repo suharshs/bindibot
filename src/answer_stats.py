@@ -12,7 +12,7 @@ import json
 from piazza_api import PiazzaAPI
 
 
-def get_answer_stats(username, password, bot_id, start_id, course_id):
+def get_answer_stats(username, password, bot_id, start_id, end_id, course_id):
   """
   Returns a dictionary with total answers, good answers, bad answers, and
   answers that have not been responded to.
@@ -24,21 +24,16 @@ def get_answer_stats(username, password, bot_id, start_id, course_id):
   answer_stats['bad'] = 0
   answer_stats['good_and_bad'] = 0
   answer_stats['no_response'] = 0
-  failed_reads = 0
   curr_id = start_id
 
-  while failed_reads < 5:
-    curr_id += 1
+  while curr_id <= end_id:
     question_doc = piazza.get_question_data(curr_id, course_id)
-    if ('error' in question_doc and
-        question_doc['error'] == 'Content_id out of range.'):
-      failed_reads += 1
-    elif 'error' not in question_doc:
-      failed_reads = 0
+    if 'error' not in question_doc:
       answer_type = get_answer_type(question_doc, bot_id)
       if 'no_answer' != answer_type:
         answer_stats['total'] += 1
         answer_stats[answer_type] += 1
+    curr_id += 1
 
   return answer_stats
 
@@ -81,10 +76,12 @@ if __name__ == '__main__':
                       required=True)
   parser.add_argument('--start_id', help='The id to start reading data from.',
                       required=True, type=int)
+  parser.add_argument('--end_id', help='The id to read data at.', required=True,
+                      type=int)
   parser.add_argument('--course_id', help='The id of the desired course.',
                       required=True)
   args = parser.parse_args()
 
   answer_stats = get_answer_stats(args.username, args.password, args.bot_id,
-                                  args.start_id, args.course_id)
+                                  args.start_id, args.end_id, args.course_id)
   print json.dumps(answer_stats)
