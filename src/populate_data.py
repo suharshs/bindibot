@@ -37,4 +37,4 @@ if __name__ == '__main__':
     piazza_api.write_course_data_elasticsearch(
         es_hosts=args.elasticsearch_hosts, es_index=args.elasticsearch_index,
         es_type=args.elasticsearch_type, course_id=course['course_id'],
-        start_id=1, end_id=course['max_id'])
+        start_id=1, end_id=course['max_id'], course_name=course['name'])

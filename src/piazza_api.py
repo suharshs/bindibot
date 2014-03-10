@@ -123,7 +123,8 @@ class PiazzaAPI:
           f.write(json.dumps(content) + '\n')
 
   def write_course_data_elasticsearch(self, es_hosts, es_index, es_type,
-                                      course_id, start_id=1, end_id=4000):
+                                      course_id, start_id=1, end_id=4000,
+                                      name=None):
     """
     Writes all raw data into the specified elasticsearch index and type.
     """
@@ -132,6 +133,8 @@ class PiazzaAPI:
     while content_id <= end_id:
       print course_id, content_id
       content_response = self.get_raw_content(content_id, course_id)
+      if name:
+        content_response['course_name'] = name
       if not content_response['result']:
         pass  # Content_id out of range.
       elif (not 'type' in content_response['result'] or
