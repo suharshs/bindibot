@@ -61,12 +61,12 @@ def get_structured_doc(raw_doc):
       structured_doc['i_answer_upvotes'] = len(child['tag_endorse'])
     if child['type'] == 'followup':
       followup_doc = {}
-      followup_doc['uid'] = child.get('ANON')
+      followup_doc['uid'] = child.get('uid', 'ANON')
       followup_doc['content'] = child['subject']
       followup_doc['comments'] = []
       for comment in child['children']:
         followup_doc['comments'].append({
-          'uid': comment.get('ANON'),
+          'uid': comment.get('uid', 'ANON'),
           'content': comment['subject']
         })
       structured_doc['followups'].append(followup_doc)
