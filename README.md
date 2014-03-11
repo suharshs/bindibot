@@ -63,7 +63,7 @@ provided.
 * `--elasticsearch_type`: If provided will write data into this type.
 * `--raw`: Print raw json data. Default is False.
 
-`populate_cs225_data.py`: Uses the piazza_api to pull previous semester data
+`populate_data.py`: Uses the piazza_api to pull previous semester data
 for cs225 and store in elasticsearch.
 
 * `--username`: The username to login with.
