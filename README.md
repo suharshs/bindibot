@@ -100,7 +100,7 @@ Running
 When running for the first time, one must populate the elastic search db with
 course data.
 
-1. `python populate_cs225_data.py`.
+1. `python populate_data.py`.
 2. `python structure_question_data.py`.
 3. `python piazza_scanner.py`.
 
