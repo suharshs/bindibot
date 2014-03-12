@@ -1,3 +1,4 @@
-Elasticsearch default TFIDF match. (post-id: 2518)
-Elasticsearch default TDIDF with tag matching. (post-id: 2692)
-Elasticsearch default TDIDF with tag matching and lab tag replacement. (post-id: 2728)
+Elasticsearch TFIDF match. (post-id: 2518)
+Elasticsearch TDIDF with tag matching. (post-id: 2692)
+Elasticsearch TDIDF with tag matching and lab tag replacement. (post-id: 2728)
+Elasticsearch BM25 with tag matching. (post-id: 2904)
