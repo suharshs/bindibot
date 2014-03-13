@@ -34,24 +34,18 @@ def get_answers(es_hosts, es_index, es_type, question_doc, num_answers,
   question_docs = get_similar_question_objects(es_hosts, es_index, es_type,
                                                question_doc, num_answers,
                                                query_function)
-  s_answers = [doc['_source']['s_answer'] for doc in question_docs
-               if doc['_source']['s_answer']]
-  i_answers = [doc['_source']['i_answer'] for doc in question_docs
-               if doc['_source']['i_answer']]
-  return {'s_answers': s_answers, 'i_answers': i_answers}
+  answers = [doc['_source']['answer'] for doc in question_docs
+             if doc['_source']['answer']]
+  return answers
 
 def print_answers(answers):
   """
   Prints the top answers to the console given an answers dictionary
   from get_answers.
   """
-  print 'Student Answers:'
-  for s_answer in answers['s_answers']:
-    print s_answer + '\n'
-  print '--------------------------------------------------------------\n'
-  print 'Instructor Answers:'
-  for i_answer in answers['i_answers']:
-    print i_answer + '\n'
+  print 'Answers:'
+  for answer in answers:
+    print answer + '\n'
 
 
 if __name__ == '__main__':
