@@ -376,4 +376,4 @@
 #monitor.jvm.gc.old.info: 5s
 #monitor.jvm.gc.old.debug: 2s
 
-index.similarity.default.type: BM25
+#index.similarity.default.type: BM25

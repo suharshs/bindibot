@@ -1,4 +1,5 @@
 Elasticsearch TFIDF match. (post-id: 2518)
 Elasticsearch TDIDF with tag matching. (post-id: 2692)
-Elasticsearch TDIDF with tag matching and lab tag replacement. (post-id: 2728)
+Elasticsearch TDIDF with tag matching (added lab tag replacement). (post-id: 2728)
 Elasticsearch BM25 with tag matching. (post-id: 2904)
+Elasticsearch TDIDF with tag matching. (post-id: 2927) (BM25 failed)
