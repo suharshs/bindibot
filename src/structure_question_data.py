@@ -39,45 +39,6 @@ class ElasticSearchIterator:
     else:
       return None
 
-def get_structured_doc(raw_doc):
-  """
-  Given a raw json object will return a structure json object.
-  """
-  structured_doc = {}
-  structured_doc['question'] = raw_doc['result']['history'][0]['content']
-  structured_doc['question_upvotes'] = len(raw_doc['result']['tag_good_arr'])
-  structured_doc['subject'] = raw_doc['result']['history'][0]['subject']
-  structured_doc['s_answer'] = ''
-  structured_doc['s_answer_upvotes'] = 0
-  structured_doc['i_answer'] = ''
-  structured_doc['i_answer_upvotes'] = 0
-  structured_doc['cid'] = raw_doc['result']['id']
-  tag_map = course_data.tag_maps[raw_doc.get('course_name', 'default')]
-  for i in range(len(raw_doc['result']['tags'])):
-    if raw_doc['result']['tags'][i] in tag_map:
-      raw_doc['result']['tags'][i] = tag_map[raw_doc['result']['tags'][i]]
-  structured_doc['tags'] = ' '.join(raw_doc['result']['tags'])
-  structured_doc['followups'] = []
-  for child in raw_doc['result']['children']:
-    if child['type'] == 's_answer' and len(child['history']) > 0:
-      structured_doc['s_answer'] = child['history'][0]['content']
-      structured_doc['s_answer_upvotes'] = len(child['tag_endorse'])
-    if child['type'] == 'i_answer' and len(child['history']) > 0:
-      structured_doc['i_answer'] = child['history'][0]['content'] 
-      structured_doc['i_answer_upvotes'] = len(child['tag_endorse'])
-    if child['type'] == 'followup':
-      followup_doc = {}
-      followup_doc['uid'] = child.get('uid', 'ANON')
-      followup_doc['content'] = child['subject']
-      followup_doc['comments'] = []
-      for comment in child['children']:
-        followup_doc['comments'].append({
-          'uid': comment.get('uid', 'ANON'),
-          'content': comment['subject']
-        })
-      structured_doc['followups'].append(followup_doc)
-  return structured_doc
-
 def get_structured_docs(raw_doc):
   """
   Given a raw json object will return a list of structured json objects.
