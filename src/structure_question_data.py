@@ -75,6 +75,10 @@ def get_structured_docs(raw_doc):
       structured_doc['answer'] = child['history'][0]['content']
       structured_doc['answer_upvotes'] = len(child['tag_endorse'])
       structured_doc['type'] = child['type']
+      structured_doc['i_endorsed'] = False
+      for endorsement in child['tag_endorse']:
+        if endorsement['admin']:
+          structured_doc['i_endorsed'] = True
       docs.append(deepcopy(structured_doc))
   return docs
 
