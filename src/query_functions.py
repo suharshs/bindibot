@@ -45,7 +45,7 @@ def tag_default_query(question_doc):
             'match' : {'question' : question}
           },
           {
-            'match' : {'tags': {'query':tags, 'boost':2}}
+            'match' : {'tags': {'query':tags, 'boost':3}}
           }
         ]
       }
