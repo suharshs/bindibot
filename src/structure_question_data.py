@@ -110,5 +110,6 @@ if __name__ == '__main__':
     structured_docs = get_structured_docs(current_doc)
     for structured_doc in structured_docs:
       if structured_doc['answer']:
-        dest_es.index(args.es_dest_index, args.es_dest_type, body=structured_doc)
+        dest_es.index(args.es_dest_index, args.es_dest_type,
+                      body=structured_doc)
     current_doc = source_iterator.next()
