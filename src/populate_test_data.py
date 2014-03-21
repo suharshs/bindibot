@@ -58,14 +58,14 @@ if __name__ == '__main__':
         print curr_id
         print question_doc['question']
         print '\n\n'
-        print answer
+        print answer[1]
         print '\n\n'
         print 'Did the response help answer the question? (y/n/s)'
         reply = raw_input('-> ')
         if reply == 's':
           break
         helpful = (reply == 'y')
-        doc = {'cid': curr_id, 'answer': answer, 'helpful': helpful}
+        doc = {'cid': curr_id, 'answer': answer[1], 'helpful': helpful}
         dest_es.index(args.es_dest_index, args.es_dest_type, body=doc)
     curr_id += 1
 

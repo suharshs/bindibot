@@ -34,7 +34,7 @@ def get_answers(es_hosts, es_index, es_type, question_doc, num_answers,
   question_docs = get_similar_question_objects(es_hosts, es_index, es_type,
                                                question_doc, num_answers,
                                                query_function)
-  answers = [doc['_source']['answer'] for doc in question_docs
+  answers = [(doc['_id'], doc['_source']['answer']) for doc in question_docs
              if doc['_source']['answer']]
   return answers
 
@@ -45,7 +45,7 @@ def print_answers(answers):
   """
   print 'Answers:'
   for answer in answers:
-    print answer + '\n'
+    print answer[1] + '\n'
 
 
 if __name__ == '__main__':
