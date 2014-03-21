@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Bindibot test data collection.</title>
+  </head>
+  <body>
+    <h4>Do the following answers help with this question?</h4>
+    <h4>Check answers that are helpful.</h4>
+    <br><hr>
+    <h3>{% raw question %}</h3>
+    <br><hr>
+    <form action="/" method="post">
+    {% module xsrf_form_html() %}
+    <input type="hidden" name="post-id" value="{{ post_id }}">
+    {% for answer in answers %}
+      <input type="checkbox" name="answer" value="{{ answer[0] }}">{% raw answer[1] %}<br><hr>
+    {% end %}
+    <br>
+    <input type="submit" value="Submit">
+    </form> 
+  </body>
+</html>
