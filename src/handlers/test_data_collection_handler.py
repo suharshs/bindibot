@@ -29,6 +29,10 @@ class TestDataCollectionHandler(RequestHandler):
 
     dest_es = Elasticsearch(self.application.es_dest_hosts)
 
+    # makes sure we count this post_id as seen.
+    dest_es.index(self.application.es_dest_index,
+                  self.application.es_dest_type,
+                  body={'c_id': post_id, 'answer_id': '0'})
     for answer in answers:
       dest_es.index(self.application.es_dest_index,
                     self.application.es_dest_type,
