@@ -16,7 +16,7 @@ class TestDataCollectionHandler(RequestHandler):
                           self.application.es_question_index,
                           self.application.es_question_type,
                           question_doc, 10,
-                          query_functions['default_match_query'])
+                          query_functions['tag_default_query'])
     self.render("test_data_collection.html",
                 question=question_doc['question'],
                 post_id=post_id,
