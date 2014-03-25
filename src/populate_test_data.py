@@ -1,14 +1,45 @@
 """
-Populates the test data and store in elasticsearch to verify different versions
-of bindibot.
-next_id: 2539
+Populates the test data questions for bindibot_stats into elasticsearch.
 """
 
 import argparse
 from elasticsearch import Elasticsearch
 from piazza_api import PiazzaAPI
-from top_answers import get_answers
-from query_functions import query_functions
+
+
+unique_question_ids_query = """
+{
+ "query" : { "query_string" : {"query" : "*","fields":["c_id"]} },
+ "facets" : {
+   "unique_questions" : { "terms" : {"fields" : ["c_id"],"order":"term","size":100} }
+ }
+}
+"""
+
+class UniqueQuestionsIterator:
+  """
+  Wrapper around elasticsearch scroll to get the next document facet.
+  """
+
+  def __init__(self, es_hosts, es_index, es_type,
+               body=unique_question_ids_query):
+    """Starts the iterator on the elasticsearch db."""
+    self.es = Elasticsearch(es_hosts)
+    self.scroll_id = self.es.search(es_index, es_type, body, search_type='scan',
+                                    scroll='10m', size=100)['_scroll_id']
+    self.cache = []
+
+  def next(self):
+    """Returns the next document or None if we have reached the end."""
+    if len(self.cache) == 0:
+      scroll_results = self.es.scroll(self.scroll_id, scroll='10m')
+      self.scroll_id = scroll_results['_scroll_id']
+      if 'facets' in scroll_results:
+        self.cache = scroll_results['facets']['unique_questions']['terms']
+    if len(self.cache) > 0:
+      return int(self.cache.pop()['term'])
+    else:
+      return None
 
 
 if __name__ == '__main__':
@@ -19,13 +50,13 @@ if __name__ == '__main__':
                       required=True)
   parser.add_argument('--course_id', help='The id of the desired course.',
                       required=True)
-  parser.add_argument('--es_question_host',
+  parser.add_argument('--es_test_host',
                       help='Read data from elasticsearch.',
                       required=True)
-  parser.add_argument('--es_question_index',
+  parser.add_argument('--es_test_index',
                       help='Read data from this index.',
                       required=True)
-  parser.add_argument('--es_question_type',
+  parser.add_argument('--es_test_type',
                       help='Read data from this type.',
                       required=True)
   parser.add_argument('--es_dest_hosts',
@@ -37,35 +68,19 @@ if __name__ == '__main__':
   parser.add_argument('--es_dest_type',
                       help='Write test data into this type.',
                       required=True)
-  parser.add_argument('--start_id',
-                      help='The id to start collecting accurate data.',
-                      required=True, type=int)
   args = parser.parse_args()
 
   piazza = PiazzaAPI(args.username, args.password)
 
-  curr_id = args.start_id
-
   dest_es = Elasticsearch(args.es_dest_hosts)
 
-  while True:
-    question_doc = piazza.get_question_data(curr_id, args.course_id)
-    if 'error' not in question_doc:
-      answers = get_answers(args.es_question_host, args.es_question_index,
-                            args.es_question_type, question_doc, 10,
-                            query_functions['default_match_query'])
-      for answer in answers:
-        print curr_id
-        print question_doc['question']
-        print '\n\n'
-        print answer[1]
-        print '\n\n'
-        print 'Did the response help answer the question? (y/n/s)'
-        reply = raw_input('-> ')
-        if reply == 's':
-          break
-        helpful = (reply == 'y')
-        doc = {'cid': curr_id, 'answer': answer[1], 'helpful': helpful}
-        dest_es.index(args.es_dest_index, args.es_dest_type, body=doc)
-    curr_id += 1
+  test_iterator = UniqueQuestionsIterator(
+      [args.es_test_host], args.es_test_index, args.es_test_type)
+
+  current_id = test_iterator.next()
+  while current_id is not None:
+    question_doc = piazza.get_question_data(current_id, args.course_id)
+    dest_es.index(args.es_dest_index, args.es_dest_type,
+                  body=question_doc)
+    current_id = test_iterator.next()
 
