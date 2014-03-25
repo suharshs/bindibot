@@ -80,6 +80,7 @@ if __name__ == '__main__':
   current_id = test_iterator.next()
   while current_id is not None:
     question_doc = piazza.get_question_data(current_id, args.course_id)
+    question_doc['c_id'] = current_id
     dest_es.index(args.es_dest_index, args.es_dest_type,
                   body=question_doc)
     current_id = test_iterator.next()
