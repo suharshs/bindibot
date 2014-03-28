@@ -4,6 +4,7 @@ Contains utility functions used in other files.
 
 from datetime import datetime
 from random import randint
+from elasticsearch import Elasticsearch
 
 
 def to_base36(value):
@@ -34,3 +35,27 @@ def js_getTime():
 def get_aid():
     """Returns the aid to submit a post."""
     return to_base36(js_getTime()) + to_base36(randint(0,1679616))
+
+class ElasticsearchIterator:
+  """
+  Wrapper around elasticsearch scroll to get the next document.
+  """
+
+  def __init__(self, es_hosts, es_index, es_type,
+               body='{"query": {"match_all": {}}}'):
+    """Starts the iterator on the elasticsearch db."""
+    self.es = Elasticsearch(es_hosts)
+    self.scroll_id = self.es.search(es_index, es_type, body, search_type='scan',
+                                    scroll='10m', size=100)['_scroll_id']
+    self.cache = []
+
+  def next(self):
+    """Returns the next document or None if we have reached the end."""
+    if len(self.cache) == 0:
+      scroll_results = self.es.scroll(self.scroll_id, scroll='10m')
+      self.scroll_id = scroll_results['_scroll_id']
+      self.cache = scroll_results['hits']['hits']
+    if len(self.cache) > 0:
+      return self.cache.pop()['_source']
+    else:
+      return None

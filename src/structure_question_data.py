@@ -11,33 +11,10 @@ a more useful structure for bindibot.
 
 import argparse
 from copy import deepcopy
-import elasticsearch
+from elasticsearch import Elasticsearch
 import course_data
+from util import ElasticsearchIterator
 
-
-class ElasticSearchIterator:
-  """
-  Wrapper around elasticsearch scroll to get the next document.
-  """
-
-  def __init__(self, es_hosts, es_index, es_type,
-               body='{"query": {"match_all": {}}}'):
-    """Starts the iterator on the elasticsearch db."""
-    self.es = elasticsearch.Elasticsearch(es_hosts)
-    self.scroll_id = self.es.search(es_index, es_type, body, search_type='scan',
-                                    scroll='10m', size=100)['_scroll_id']
-    self.cache = []
-
-  def next(self):
-    """Returns the next document or None if we have reached the end."""
-    if len(self.cache) == 0:
-      scroll_results = self.es.scroll(self.scroll_id, scroll='10m')
-      self.scroll_id = scroll_results['_scroll_id']
-      self.cache = scroll_results['hits']['hits']
-    if len(self.cache) > 0:
-      return self.cache.pop()['_source']
-    else:
-      return None
 
 def get_structured_docs(raw_doc):
   """
@@ -102,9 +79,9 @@ if __name__ == '__main__':
                       required=True)
   args = parser.parse_args()
 
-  source_iterator = ElasticSearchIterator(
+  source_iterator = ElasticsearchIterator(
       [args.es_source_host], args.es_source_index, args.es_source_type)
-  dest_es = elasticsearch.Elasticsearch(args.es_dest_hosts)
+  dest_es = Elasticsearch(args.es_dest_hosts)
   current_doc = source_iterator.next()
   while current_doc is not None:
     structured_docs = get_structured_docs(current_doc)

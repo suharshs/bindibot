@@ -6,7 +6,7 @@ import argparse
 from elasticsearch import Elasticsearch
 from top_answers import get_answers
 from query_functions import query_functions
-from structure_question_data import ElasticSearchIterator
+from util import ElasticsearchIterator
 
 
 if __name__ == '__main__':
@@ -42,7 +42,7 @@ if __name__ == '__main__':
                       default='default_match_query')
   args = parser.parse_args()
 
-  test_iterator = ElasticSearchIterator(
+  test_iterator = ElasticsearchIterator(
       [args.es_test_question_host], args.es_test_question_index,
       args.es_test_question_type)
 
