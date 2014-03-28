@@ -12,7 +12,6 @@
       <form action="/" method="post">
       {% module xsrf_form_html() %}
       <input type="hidden" name="test-id" value="{{ test_id }}">
-      <input type="hidden" name="es-test-type" value="{{ es_test_type }}">
       <input type="checkbox" name="answer" value="{{ test_id }}">{% raw answer %}<br><hr>
       <br>
       <input type="submit" value="Submit">

@@ -17,9 +17,7 @@ class Application(tornado.web.Application):
     self.es_test_question_type = 'test_questions'
     self.es_test_host = 'chara.cs.illinois.edu:9200'
     self.es_test_index = 'cs225'
-    self.es_test_types = [
-        'default_test'
-    ]
+    self.es_test_type = 'test_answers'
 
     handlers = [
         tornado.web.URLSpec(r'/', TestDataCollectionHandler)

@@ -4,18 +4,16 @@ from elasticsearch import Elasticsearch
 
 class TestDataCollectionHandler(RequestHandler):
   def get(self):
-    question, answer, test_id, es_test_type = self.get_test_question_answer()
+    question, answer, test_id = self.get_test_question_answer()
     self.render("test_data_collection.html",
                 question=question,
                 test_id=test_id,
-                answer=answer,
-                es_test_type=es_test_type)
+                answer=answer)
 
   def post(self):
     form_data = self.request.arguments
     answer = form_data.get('answer', [])
     test_answer_id = form_data.get('test-id')
-    es_test_type = form_data.get('es-test-type')
 
     test_answer_es = Elasticsearch([self.application.es_test_host])
 
@@ -27,8 +25,8 @@ class TestDataCollectionHandler(RequestHandler):
     update_doc['doc'] = partial_doc
 
     test_answer_es.update(index=self.application.es_test_index,
-                          doc_type=es_test_type, id=test_answer_id,
-                          body=update_doc, refresh=True)
+                          doc_type=self.application.es_test_type,
+                          id=test_answer_id, body=update_doc, refresh=True)
 
     self.redirect('/')
 
@@ -48,15 +46,11 @@ class TestDataCollectionHandler(RequestHandler):
     """
     answer_doc = None
     test_answer_es = Elasticsearch([self.application.es_test_host])
-    es_test_type = ''
-    for test_type in self.application.es_test_types:
-      search_results = test_answer_es.search(self.application.es_test_index,
-                                             test_type, body=query_string,
-                                             size=1)
-      if search_results['hits']['total'] > 0:
-        answer_doc = search_results['hits']['hits'][0]
-        es_test_type = test_type
-        break
+    search_results = test_answer_es.search(self.application.es_test_index,
+                                           self.application.es_test_type,
+                                           body=query_string, size=1)
+    if search_results['hits']['total'] > 0:
+      answer_doc = search_results['hits']['hits'][0]
 
     if not answer_doc:
       return self.generate_done_message()
@@ -78,4 +72,4 @@ class TestDataCollectionHandler(RequestHandler):
         self.application.es_test_question_type, body=query_string, size=1)
     question = search_results['hits']['hits'][0]['_source']['question']
 
-    return (question, answer, test_answer_id, es_test_type)
+    return (question, answer, test_answer_id)

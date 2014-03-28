@@ -60,5 +60,6 @@ if __name__ == '__main__':
     }
     answer_doc['test_completed'] = False
     answer_doc['is_helpful'] = False
+    answer_doc['query_function'] = args.query_function
     dest_es.index(args.es_dest_index, args.es_dest_type, body=answer_doc)
     current_doc = test_iterator.next()
