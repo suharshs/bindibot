@@ -13,7 +13,7 @@ def default_match_query(question_doc):
   """
   Returns the query string to search for related posts.
   """
-  question = question_doc['question']
+  question = question_doc['question'][:1000] # limit query length
   subject = question_doc['subject']
   query_dict = {
     'query': {
@@ -34,7 +34,7 @@ def tag_default_query(question_doc):
   """
   Returns the query string to search for related posts with tag limitation.
   """
-  question = question_doc['question']
+  question = question_doc['question'][:1000] # limit query length
   subject = question_doc['subject']
   tags = question_doc['tags']
   query_dict = {

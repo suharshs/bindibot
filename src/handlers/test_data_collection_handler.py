@@ -1,54 +1,81 @@
-import sys
-sys.path.append('./..')
-
 from tornado.web import RequestHandler
 from elasticsearch import Elasticsearch
-from piazza_api import PiazzaAPI
-from top_answers import get_answers
-import random
-from query_functions import query_functions
 
 
 class TestDataCollectionHandler(RequestHandler):
   def get(self):
-    question_doc, post_id = self.get_random_question_object()
-    answers = get_answers(self.application.es_question_host,
-                          self.application.es_question_index,
-                          self.application.es_question_type,
-                          question_doc, 10,
-                          query_functions['tag_default_query'])
+    question, answer, test_id, es_test_type = self.get_test_question_answer()
     self.render("test_data_collection.html",
-                question=question_doc['question'],
-                post_id=post_id,
-                answers=answers)
+                question=question,
+                test_id=test_id,
+                answer=answer,
+                es_test_type=es_test_type)
 
   def post(self):
     form_data = self.request.arguments
-    answers = form_data.get('answer', [])
-    post_id = form_data['post-id'][0]
+    answer = form_data.get('answer', [])
+    test_answer_id = form_data.get('test-id')
+    es_test_type = form_data.get('es-test-type')
 
-    dest_es = Elasticsearch(self.application.es_dest_hosts)
+    test_answer_es = Elasticsearch([self.application.es_test_host])
 
-    # makes sure we count this post_id as seen.
-    dest_es.index(self.application.es_dest_index,
-                  self.application.es_dest_type,
-                  body={'c_id': post_id, 'answer_id': '0'})
-    for answer in answers:
-      dest_es.index(self.application.es_dest_index,
-                    self.application.es_dest_type,
-                    body={'c_id': post_id, 'answer_id': answer})
+    partial_doc = {'test_completed': True}
+    if answer:
+      partial_doc['is_helpful'] = True
+
+    update_doc = {}
+    update_doc['doc'] = partial_doc
+
+    test_answer_es.update(index=self.application.es_test_index,
+                          doc_type=es_test_type, id=test_answer_id,
+                          body=update_doc, refresh=True)
 
     self.redirect('/')
 
-  def get_random_question_object(self):
+  def generate_done_message(self):
+    return ('No more questions', -1, '')
+
+  def get_test_question_answer(self):
     """
-    Gets a random question to populate the page with.
+    Gets a test answer to populate the page with.
     """
-    piazza = PiazzaAPI(self.application.username, self.application.password)
-    post_id = random.choice(self.application.post_ids)
-    question_doc = piazza.get_question_data(post_id, self.application.course_id)
-    while 'error' in question_doc:
-      post_id = random.choice(self.application.post_ids)
-      question_doc = piazza.get_question_data(post_id,
-          self.application.course_id)
-    return (question_doc, post_id)
+    query_string = """
+    {
+      "query": {
+        "term" : {"test_completed": false}
+      }
+    }
+    """
+    answer_doc = None
+    test_answer_es = Elasticsearch([self.application.es_test_host])
+    es_test_type = ''
+    for test_type in self.application.es_test_types:
+      search_results = test_answer_es.search(self.application.es_test_index,
+                                             test_type, body=query_string,
+                                             size=1)
+      if search_results['hits']['total'] > 0:
+        answer_doc = search_results['hits']['hits'][0]
+        es_test_type = test_type
+        break
+
+    if not answer_doc:
+      return self.generate_done_message()
+
+    answer = answer_doc['_source']['answer']
+    test_answer_id = answer_doc['_id']
+    c_id = answer_doc['_source']['c_id']
+
+    query_string = """
+    {
+      "query": {
+        "term" : {"c_id": %s}
+      }
+    }
+    """ % c_id
+    test_question_es = Elasticsearch([self.application.es_test_question_host])
+    search_results = test_question_es.search(
+        self.application.es_test_question_index,
+        self.application.es_test_question_type, body=query_string, size=1)
+    question = search_results['hits']['hits'][0]['_source']['question']
+
+    return (question, answer, test_answer_id, es_test_type)

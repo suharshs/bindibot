@@ -9,29 +9,17 @@ from handlers.test_data_collection_handler import TestDataCollectionHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run tornado in debug mode", type=bool)
-define('username', help='The username to login with.')
-define('password', help='The password for the username.')
-define('course_id', help='The id of the desired course.')
-define('es_question_host', help='Read data from elasticsearch.')
-define('es_question_index', help='Read data from this index.')
-define('es_question_type', help='Read data from this type.')
-define('es_dest_hosts', help='Store test data into elasticsearch.',
-       multiple=True)
-define('es_dest_index', help='Write test data into this index.')
-define('es_dest_type', help='Write test data into this type.')
 
 class Application(tornado.web.Application):
   def __init__(self):
-    self.post_ids = range(2500, 3000)
-    self.username = options.username
-    self.password = options.password
-    self.course_id = options.course_id
-    self.es_question_host = options.es_question_host
-    self.es_question_index = options.es_question_index
-    self.es_question_type = options.es_question_type
-    self.es_dest_hosts = options.es_dest_hosts
-    self.es_dest_index = options.es_dest_index
-    self.es_dest_type = options.es_dest_type
+    self.es_test_question_host = 'chara.cs.illinois.edu:9200'
+    self.es_test_question_index = 'cs225'
+    self.es_test_question_type = 'test_questions'
+    self.es_test_host = 'chara.cs.illinois.edu:9200'
+    self.es_test_index = 'cs225'
+    self.es_test_types = [
+        'default_test'
+    ]
 
     handlers = [
         tornado.web.URLSpec(r'/', TestDataCollectionHandler)
