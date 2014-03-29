@@ -1,5 +1,6 @@
 from tornado.web import RequestHandler
 from elasticsearch import Elasticsearch
+import random
 
 
 class TestDataCollectionHandler(RequestHandler):
@@ -48,9 +49,9 @@ class TestDataCollectionHandler(RequestHandler):
     test_answer_es = Elasticsearch([self.application.es_test_host])
     search_results = test_answer_es.search(self.application.es_test_index,
                                            self.application.es_test_type,
-                                           body=query_string, size=1)
+                                           body=query_string, size=10)
     if search_results['hits']['total'] > 0:
-      answer_doc = search_results['hits']['hits'][0]
+      answer_doc = random.choice(search_results['hits']['hits'])
 
     if not answer_doc:
       return self.generate_done_message()
