@@ -39,7 +39,7 @@ if __name__ == '__main__':
                       required=True)
   parser.add_argument('--query_function',
                       help='The query function to search for matches with.',
-                      default='default_match_query')
+                      required=True)
   args = parser.parse_args()
 
   test_iterator = ElasticsearchIterator(
@@ -58,8 +58,42 @@ if __name__ == '__main__':
         'answer': answer_pair[0][1],
         'c_id': current_doc['c_id']
     }
+
+    # check if the question answer pair has already been completed by a
+    # previous version.
+    query_string = """
+    {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "query_string": {
+                "default_field": "test_answers.answer_id",
+                "query": "%s"
+              }
+            },
+            {
+              "term": {
+                "test_answers.c_id": "%s"
+              }
+            }
+          ]
+        }
+      }
+    }
+    """ % (answer_doc['answer_id'], answer_doc['c_id'])
+
+    search_results = dest_es.search(args.es_dest_index, args.es_dest_type,
+                                    body=query_string)
+
     answer_doc['test_completed'] = False
     answer_doc['is_helpful'] = False
     answer_doc['query_function'] = args.query_function
+
+    if search_results['hits']['total'] > 0:
+      answer_doc['test_completed'] = True
+      is_helpful = search_results['hits']['hits'][0]['_source']['is_helpful']
+      answer_doc['is_helpful'] = is_helpful
+
     dest_es.index(args.es_dest_index, args.es_dest_type, body=answer_doc)
     current_doc = test_iterator.next()
