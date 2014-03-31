@@ -13,30 +13,31 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Runs bindibot on test data.')
   parser.add_argument('--es_test_question_host',
                       help='Read test questions from elasticsearch.',
-                      required=True)
+                      default='chara.cs.illinois.edu:9200')
   parser.add_argument('--es_test_question_index',
                       help='Read test questions from this index.',
-                      required=True)
+                      default='cs225')
   parser.add_argument('--es_test_question_type',
-                      help='Read test questions from this type.', required=True)
+                      help='Read test questions from this type.',
+                      default='test_questions')
   parser.add_argument('--es_question_host',
                       help='Read question data from elasticsearch.',
-                      required=True)
+                      default='chara.cs.illinois.edu:9200')
   parser.add_argument('--es_question_index',
                       help='Read question data from this index.',
-                      required=True)
+                      default='cs225')
   parser.add_argument('--es_question_type',
                       help='Read question data from this type.',
-                      required=True)
-  parser.add_argument('--es_dest_hosts',
+                      default='structured')
+  parser.add_argument('--es_dest_host',
                       help='Store result data into elasticsearch.',
-                      required=True, nargs='+')
+                      default='chara.cs.illinois.edu:9200')
   parser.add_argument('--es_dest_index',
                       help='Write result data into this index.',
-                      required=True)
+                      default='cs225')
   parser.add_argument('--es_dest_type',
                       help='Write result data into this type.',
-                      required=True)
+                      default='test_answers')
   parser.add_argument('--query_function',
                       help='The query function to search for matches with.',
                       required=True)
@@ -46,7 +47,7 @@ if __name__ == '__main__':
       [args.es_test_question_host], args.es_test_question_index,
       args.es_test_question_type)
 
-  dest_es = Elasticsearch(args.es_dest_hosts)
+  dest_es = Elasticsearch([args.es_dest_host])
 
   current_doc = test_iterator.next()
   while current_doc is not None:
