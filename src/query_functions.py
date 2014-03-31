@@ -131,6 +131,62 @@ def tag_match_query_100(question_doc):
     query_dict['query']['bool']['should'].append({'match':{'subject':subject}})
   return json.dumps(query_dict)
 
+def answer_match_query(question_doc):
+  """
+  Return the query string to search for related posts by also comparing the
+  question text to the answer.
+  """
+  question = question_doc['question'][:1000] # limit query length
+  subject = question_doc['subject']
+  query_dict = {
+    'query': {
+      'bool': {
+        'should': [
+          {
+            'match' : {'question' : question}
+          },
+          {
+            'match' : {'answer': question}
+          },
+          {
+            'match' : {'subject': subject}
+          }
+        ]
+      }
+    }
+  }
+  return json.dumps(query_dict)
+
+def answer_tag_match_query(question_doc):
+  """
+  Return the query string to search for related posts by also comparing the
+  query text to answer and filtering by tags.
+  """
+  question = question_doc['question'][:1000] # limit query length
+  subject = question_doc['subject']
+  tags = question_doc['tags']
+  query_dict = {
+    'query': {
+      'bool': {
+        'should': [
+          {
+            'match' : {'question' : question}
+          },
+          {
+            'match' : {'answer': question}
+          },
+          {
+            'match' : {'subject': subject}
+          },
+          {
+            'match' : {'tags': {'query':tags, 'boost':3}}
+          }
+        ]
+      }
+    }
+  }
+  return json.dumps(query_dict)
+
 
 # Dictionary that contains all query functions for simple importing.
 query_functions = {
@@ -139,4 +195,6 @@ query_functions = {
   'tag_match_query_2': tag_match_query_2,
   'tag_match_query_3': tag_match_query_3,
   'tag_match_query_100': tag_match_query_100,
+  'answer_match_query': answer_match_query,
+  'answer_tag_match_query': answer_tag_match_query,
 }
