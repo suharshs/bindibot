@@ -213,6 +213,35 @@ def weight_instructor_query(question_doc):
   }
   return json.dumps(query_dict)
 
+def answer_tag_instructor_query(question_doc):
+  question = question_doc['question'][:1000] # limit query length
+  subject = question_doc['subject']
+  tags = question_doc['tags']
+  query_dict = {
+    'query': {
+      'bool': {
+        'should': [
+          {
+            'match' : {'question' : question}
+          },
+          {
+            'match' : {'answer': question}
+          },
+          {
+            'match' : {'subject': subject}
+          },
+          {
+            'match' : {'tags': {'query':tags, 'boost':3}}
+          },
+          {
+            'match' : {'type': 'i_answer'}
+          }
+        ]
+      }
+    }
+  }
+  return json.dumps(query_dict)
+
 
 # Dictionary that contains all query functions for simple importing.
 query_functions = {
@@ -223,5 +252,6 @@ query_functions = {
   'tag_match_query_100': tag_match_query_100,
   'answer_match_query': answer_match_query,
   'answer_tag_match_query': answer_tag_match_query,
-  'weight_instructor_query': weight_instructor_query
+  'weight_instructor_query': weight_instructor_query,
+  'answer_tag_instructor_query': answer_tag_instructor_query
 }
