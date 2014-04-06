@@ -271,6 +271,75 @@ def upvotes_query(question_doc):
   }
   return json.dumps(query_dict)
 
+def tag_upvotes_query(question_doc):
+  """
+  Weights answers based on number of upvotes and tag matches.
+  """
+  question = question_doc['question'][:1000] # limit query length
+  subject = question_doc['subject']
+  tags = question_doc['tags']
+  query_dict = {
+    'query': {
+      'function_score': {
+        'query': {
+          'bool': {
+            'should': [
+              {
+                'match' : {'question' : question}
+              },
+              {
+                'match' : {'subject': subject}
+              },
+              {
+                'match' : {'tags': {'query':tags, 'boost':3}}
+              }
+            ]
+          },
+        },
+        'script_score': {
+          'script': "sqrt(doc['answer_upvotes'].value + 1)"
+        }
+      }
+    }
+  }
+  return json.dumps(query_dict)
+
+def answer_tag_upvotes_query(question_doc):
+  """
+  Weights answers based on number of upvotes and answer matches and tag matches.
+  """
+  question = question_doc['question'][:1000] # limit query length
+  subject = question_doc['subject']
+  tags = question_doc['tags']
+  query_dict = {
+    'query': {
+      'function_score': {
+        'query': {
+          'bool': {
+            'should': [
+              {
+                'match' : {'question' : question}
+              },
+              {
+                'match' : {'answer': question}
+              },
+              {
+                'match' : {'subject': subject}
+              },
+              {
+                'match' : {'tags': {'query':tags, 'boost':3}}
+              }
+            ]
+          },
+        },
+        'script_score': {
+          'script': "sqrt(doc['answer_upvotes'].value + 1)"
+        }
+      }
+    }
+  }
+  return json.dumps(query_dict)
+
 
 # Dictionary that contains all query functions for simple importing.
 query_functions = {
@@ -283,5 +352,7 @@ query_functions = {
   'answer_tag_match_query': answer_tag_match_query,
   'weight_instructor_query': weight_instructor_query,
   'answer_tag_instructor_query': answer_tag_instructor_query,
-  'upvotes_query': upvotes_query
+  'upvotes_query': upvotes_query,
+  'tag_upvotes_query': tag_upvotes_query,
+  'answer_tag_upvotes_query': answer_tag_upvotes_query
 }
