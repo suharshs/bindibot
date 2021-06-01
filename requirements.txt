@@ -3,5 +3,5 @@ backports.ssl-match-hostname==3.4.0.2
 elasticsearch==1.0.0
 mock==1.0.1
 tornado==3.2
-urllib3==1.7.1
+urllib3==1.26.5
 wsgiref==0.1.2
